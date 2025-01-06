@@ -51,16 +51,16 @@
 %\newtheorem{rem}{Remark}
 % Marks the beginning of the document
 \begin{document}
-\title{}
+\title{9.1.8}
 \author{EE24BTECH11007 - Arnav Makarand Yadnopavit}
 \maketitle
 \renewcommand{\thefigure}{\theenumi}
 \renewcommand{\thetable}{\theenumi}
 \parindent 0px Question: Solve the differential equation $y^\prime+y=e^x$ with initial condition $y\brak{0}=1/2$. \\
 \solution\\
-Theoretical Solution:\\
+\textbf{Theoretical Solution:}\\
 \begin{align}
-    \frac{dy}{dx}+y&=e^x\\
+    \frac{dy}{dx}+y&=e^x \label{eq:first}\\
     \frac{dy}{dx} e^x+ye^x&=e^{2x}\\
     d\brak{ye^x}&=e^{2x}dx\\
     \int \frac{d\brak{ye^x}}{dx}&=\int e^{2x}dx\\
@@ -73,15 +73,57 @@ Substituting values from initial conditions
     \implies c&=0\\
     \therefore y&=\frac{e^x}{2}
 \end{align}
-The theoretical solution is $f\brak{x}=\frac{e^x}{2}$\\
-Computational Solution:\\
+The theoretical solution is $f\brak{x}=\frac{e^x}{2}$\\\\
+\textbf{Solution Using Laplace Transform:}\\
+Laplace Transform \\
+\begin{align}
+	\mathcal{L} \brak{f(x)} = F(s) = \int_{0}^{\infty} f(x) e^{-sx} dx \label{eq:lap} 
+\end{align}
+Laplace Transform is a linear transformation, since integration is a linear operation.\\
+Laplace transform of some functions: 
+	\begin{align}
+	f(x) = 0 &\implies F(s) = 0 \\
+	f(x) = 1 &\implies F(s) = \frac{1}{s} \text{ for } Re(s) > 0\\
+	f(x) = x^n &\implies F(s) = \frac{n!}{s^{n+1}} \text{ for } Re(s) > 0 \\
+	f(x) = e^{ax} &\implies F(s) = \frac{1}{s-a} \text{ for } Re(s) > a \label{eq:exp}\\
+	f(x) = \sin{ax} &\implies F(s) = \frac{a}{s^2 + a^2} \text{ for } Re(s) > 0 \\
+	f(x) = \cos{ax} &\implies F(s) = \frac{s}{s^2 + a^2} \text{ for } Re(s) > 0
+\end{align}
+Some other useful results include :
+		\begin{align}
+			\mathcal{L} \brak{f^{\prime}(x)} &= s F(s) - f(0^{-}) \\
+			\mathcal{L} \brak{f^{\prime \prime}(x)} &= s^2 F(s) - s f(0^{-}) - f^{\prime}(0^{-}) 
+		\end{align}
+Applying Laplace transform to \eqref{eq:first} on both sides:\\
+\begin{align}
+    \mathcal{L}\brak{\frac{dy}{dx}+y}&=\mathcal{L}\brak{e^x}\\
+    sF\brak{s}-f\brak{0^-}+F\brak{s}&=\frac{1}{s-1}\\
+    F\brak{s}&=\frac{1}{s^2-1}+\frac{f\brak{0^-}}{s+1}
+\end{align}
+Using initial condition, $y\brak{0^-}=1/2$, we have
+\begin{align}
+    F\brak{s}&=\frac{s+1}{2\brak{s^2-1}}\\
+    F\brak{s}&=\frac{1}{2\brak{s-1}}\\
+    f\brak{x}&=\frac{1}{2}\mathcal{L}^{-1}\brak{\frac{1}{s-1}}
+\end{align}
+Using \eqref{eq:exp} we can deduce solution to be the following
+\begin{align}
+    f\brak{x}=\frac{e^x}{2}
+\end{align}
+\\
+\textbf{Computational Solution:}\\
 We can plot a curve with individual closely spaced points such that
 \begin{align}
+    x_0&=0\\
+    y_0&=\frac{1}{2}\\
+    h&=0.001\\
+    x_{n+1}&=x_{n}+h\\
     y_{n+1}&=y_n+hy^\prime\\
-    y_{n+1}&=y_n+h\brak{e^x-y_n}
+    \implies y_{n+1}&=y_n+h\brak{e^x-y}
 \end{align}
 \begin{figure}[h]
     \centering
     \includegraphics[width=\columnwidth]{figs/fig.png}
  \end{figure}
 \end{document}
+
