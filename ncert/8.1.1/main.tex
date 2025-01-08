@@ -78,7 +78,7 @@ The trapezoidal rule is as follows.
     A &= \int_a^b f\brak{x}\, dx \approx h\brak{\frac{1}{2}f\brak{a} + f\brak{x_1} + f\brak{x_2} \cdots + f\brak{x_{n-1}} + \frac{1}{2}f\brak{b}}\\
     h &= \frac{b-a}{n}\\
     A &= j_n, \text{ where, } j_{i + 1} = j_i + h\frac{f\brak{x_{i+1}} + f\brak{x_i}}{2}\\ 
-        \xrightarrow{} j_{i + 1} &= j_i + \frac{bh}{a}\brak{\sqrt{x_{i+1}}+\sqrt{x_{i}}}\\
+        \xrightarrow{} j_{i + 1} &= j_i + h\brak{\sqrt{x_{i+1}}+\sqrt{x_{i}}}\\
     x_{i+1} &= x_i + h\\
     h&=0.00001\\
     n&=300000
