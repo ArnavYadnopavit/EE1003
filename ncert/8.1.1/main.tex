@@ -75,19 +75,15 @@ Finding Area
 Using the trapezoidal rule to get the area\\
 The trapezoidal rule is as follows.
 \begin{align}
-    \int^{b}_{a} f\brak{x}dx\approx \sum^{N}_{k=1}\frac{f\brak{x_{k+1}}+f\brak{x_{k}}}{2}h
+    A &= \int_a^b f\brak{x}\, dx \approx h\brak{\frac{1}{2}f\brak{a} + f\brak{x_1} + f\brak{x_2} \cdots + f\brak{x_{n-1}} + \frac{1}{2}f\brak{b}}\\
+    h &= \frac{b-a}{n}\\
+    A &= j_n, \text{ where, } j_{i + 1} = j_i + h\frac{f\brak{x_{i+1}} + f\brak{x_i}}{2}\\ 
+        \xrightarrow{} j_{i + 1} &= j_i + \frac{bh}{a}\brak{\sqrt{x_{i+1}}+\sqrt{x_{i}}}\\
+    x_{i+1} &= x_i + h\\
+    h&=0.00001\\
+    n&=300000
 \end{align}
-where
-\begin{align}
-    h=\frac{b-a}{N}
-\end{align}
-$\therefore$The difference equation obtained is\\
-\begin{align}
-    \int^{4}_{1} f\brak{x}dx=\sum^{N}_{k=1}\frac{\sqrt{x_{k+1}}+\sqrt{x_{k}}}{2}h\\
-    h=0.00001\\
-    N=300000
-\end{align}
-Using the code answer obtained is 4.66666666667341
+Using the code answer obtained is $A=4.66666666667341$ sq. units
 \begin{figure}[h]
     \centering
     \includegraphics[width=\columnwidth]{figs/fig.png}
