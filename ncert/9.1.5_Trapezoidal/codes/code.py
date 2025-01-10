@@ -16,7 +16,7 @@ lib.fx.restype = POINTER(Coords)  # Pointer to Coords array
 lib.fx.argtypes = [c_float, c_float]  # float, float
 
 # Define initial conditions
-yn = -1.0/9.0  # Initial value for yn
+yn = 0  # Initial value for yn
 x = 0.0   # Initial value for x
 
 
@@ -24,7 +24,7 @@ plt.figure(figsize=(8, 6))
 
 #Theoritical Plot
 X = np.linspace(0, 10, 10000)
-Y = (-np.sin(3*X)-np.cos(3*X))/9.0
+Y = (-np.sin(3*X)-np.cos(3*X))/9.0+1.0/9.0
 plt.plot(X, Y, label="theory", color='red')
 
 # Call fx
