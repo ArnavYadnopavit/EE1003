@@ -120,10 +120,14 @@ If $\delta=0$, then $\mu=a_m-b_{m-1}$
 In case a matrix has complex eigenvalues a hessenberg matrix $\brak{2\times2}$ will be formed along the diagonal of the triangularised matrix A such that:
 $$A=\myvec{\lambda_1 & \dots & \dots & \dots \\ 0 & a & b & \dots\\ \vdots & c & d & \dots\\ 0 & \dots & \dots & \lambda_n}$$
 then:
-\begin{align*}
+\begin{align}
     \lambda_2=\frac{a+d+\sqrt{\brak{a+d}^2-4\brak{ad-bc}}}{2}\\
     \lambda_3=\frac{a+d-\sqrt{\brak{a+d}^2-4\brak{ad-bc}}}{2}\\
-\end{align*}
+\end{align}
+Companion matrix formed is
+\begin{align}
+    A=\myvec{0&1\\273&-32}
+\end{align}
 The solution given by the code is
 \begin{align}
 	x_1=7.000000 + 0.000000i\\
@@ -141,15 +145,15 @@ where,
 \end{align}
 The update equation will be
 \begin{align}
-	x_{n+1} = x_n - \frac{2{x_n}^2 - 13x_n + 9}{4x_n-13}\\
+	x_{n+1} = x_n - \frac{x_n^2 + 32x_n - 273}{2x_n-32}\\
 \end{align}
 The problem with this method is if the roots are complex but the coefficients are real, $x_n$ either converges to an extrema or grows continuously without any bound.
 However, to obtain complex solutions, we can just take the initial guess point to be a
 random complex number.\\
 The output of a program written to find roots is shown below:
 \begin{align}
-	r_1 = 0.7878\\
-	r_2 = 5.7122
+	r_1 = 7.00\\
+	r_2 = -39.00
 \end{align}
 \begin{figure}[h]
     \centering
