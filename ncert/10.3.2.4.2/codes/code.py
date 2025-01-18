@@ -2,34 +2,45 @@ import ctypes
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Define the C library and load it
-lib = ctypes.CDLL('./func.so')  # Ensure the correct path to your compiled C library
+# Load the shared library
+lib = ctypes.CDLL('./func.so')  # Compile the C code to a shared library (.so)
 
-ORDER = 2
-
+# Define the matrix structure in Python
 class Matrix(ctypes.Structure):
-    _fields_ = [("mat", ctypes.c_double * ORDER * ORDER)]
+    _fields_ = [("mat", ctypes.c_double * 4)]  # 2x2 matrix flattened to 1D (ORDER * ORDER)
 
-# Create the matrix in Python
-matrix_data = [[1, -1], [3, -3]]
-matrix_instance = Matrix()
+# Define the C function prototypes
+lib.luDecompose.argtypes = [Matrix, ctypes.POINTER(Matrix), ctypes.POINTER(Matrix)]
+lib.luDecompose.restype = None
 
-for i in range(ORDER):
-    for j in range(ORDER):
-        matrix_instance.mat[i][j] = matrix_data[i][j]
+# Input matrix A (2x2)
+A = Matrix((1, -1, 3, -3))
 
-# Define the is_singular function
-lib.is_singular.argtypes = [Matrix]
-lib.is_singular.restype = ctypes.c_int
+# Create empty matrices for L and U
+L = Matrix((0,) * 4)
+U = Matrix((0,) * 4)
 
-# Check if the matrix is singular
-if lib.is_singular(matrix_instance):
-    print("The matrix is singular.")
-else:
-    print("The matrix is not singular.")
+# Call the C function for LU decomposition
+lib.luDecompose(A, ctypes.byref(L), ctypes.byref(U))
+
+# Convert the results back to Python-readable format
+def matrix_to_numpy(mat):
+    return np.array(mat.mat).reshape(2, 2)
+
+L_np = matrix_to_numpy(L)
+U_np = matrix_to_numpy(U)
+
+# Print the results
+print("Input Matrix A:")
+print(matrix_to_numpy(A))
+print("\nLower Triangular Matrix L:")
+print(L_np)
+print("\nUpper Triangular Matrix U:")
+print(U_np)
+
 
 # Plot the lines x - y = 8 and 3x - 3y = 16
-x = np.linspace(-10, 10, 400)
+x = np.linspace(-20, 20, 400)
 y1 = x - 8
 y2 = x - (16 / 3)
 
@@ -41,6 +52,7 @@ plt.legend()
 plt.grid(True)
 plt.axhline(0, color='black',linewidth=0.5)
 plt.axvline(0, color='black',linewidth=0.5)
+plt.axis('equal')
 plt.savefig("../figs/fig.png")
 plt.show()
 
