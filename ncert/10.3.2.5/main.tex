@@ -72,29 +72,38 @@ b = \myvec{36 \\ 4}, \quad
 x = \myvec{x \\ y}.
 \end{align}
 
-\subsection*{$LU$ Decomposition of $A$}
-We aim to decompose $A$ into $LU$, where:
-\begin{align}
-L = \myvec{1 & 0 \\ l_{21} & 1}, \quad
-U = \myvec{u_{11} & u_{12} \\ 0 & u_{22}}.
-\end{align}
+\subsection*{LU factorization using update equaitons}
+    Given a matrix $ \mathbf{A} $ of size $ n \times n $, LU decomposition is performed row by row and column by column. The update equations are as follows:\\
+    \textbf{Step-by-Step Procedure:}\\
+1. Initialization: 
+   - Start by initializing $ \mathbf{L} $ as the identity matrix $ \mathbf{L} = \mathbf{I} $ and $ \mathbf{U} $ as a copy of $ \mathbf{A} $.
+   
+2. Iterative Update:
+   - For each pivot $ k = 1, 2, \ldots, n $:
+     - Compute the entries of $ U $ using the first update equation.
+     - Compute the entries of $ L $ using the second update equation.
+   
+3. Result:
+   - After completing the iterations, the matrix $ \mathbf{A} $ is decomposed into $ \mathbf{L} \cdot \mathbf{U} $, where $ \mathbf{L} $ is a lower triangular matrix with ones on the diagonal, and $ \mathbf{U} $ is an upper triangular matrix.
 
-Substituting $LU = A$:
-\begin{align}
-\myvec{1 & 0 \\ l_{21} & 1}
-\myvec{u_{11} & u_{12} \\ 0 & u_{22}}
-=
-\myvec{1 & 1 \\ 1 & -1}.
-\end{align}
+    
 
-From this:
-\begin{align}
-u_{11} &= 1, \quad u_{12} = 1, \\
-l_{21}u_{11} &= 1 \implies l_{21} = 1, \\
-l_{21}u_{12} + u_{22} &= -1 \implies 1(1) + u_{22} = -1 \implies u_{22} = -2.
-\end{align}
+\subsection*{1. Update for $ U_{k,j} $ (Entries of $ U $)}
 
-Thus:
+For each column $ j \geq k $, the entries of $ U $ in the $ k $-th row are updated as:
+\[
+U_{k,j} = A_{k,j} - \sum_{m=1}^{k-1} L_{k,m} \cdot U_{m,j}, \quad \text{for } j \geq k.
+\]
+This equation computes the elements of the upper triangular matrix $ \mathbf{U} $ by eliminating the lower triangular portion of the matrix.
+
+\subsection*{2. Update for $ L_{i,k} $ (Entries of $ L $)}
+
+For each row $ i > k $, the entries of $ L $ in the $ k $-th column are updated as:
+\[
+L_{i,k} = \frac{1}{U_{k,k}} \left( A_{i,k} - \sum_{m=1}^{k-1} L_{i,m} \cdot U_{m,k} \right), \quad \text{for } i > k.
+\]
+This equation computes the elements of the lower triangular matrix $ \mathbf{L} $, where each entry in the column is determined by the values in the rows above it.\\
+Using a code we get L,U as 
 \begin{align}
 L = \myvec{1 & 0 \\ 1 & 1}, \quad
 U = \myvec{1 & 1 \\ 0 & -2}.
