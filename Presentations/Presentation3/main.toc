@@ -1,0 +1,8 @@
+\beamer@sectionintoc {2}{Question}{3}{0}{1}
+\beamer@sectionintoc {3}{Solution}{4}{0}{2}
+\beamer@subsectionintoc {3}{1}{Matrix Representation}{4}{0}{2}
+\beamer@subsectionintoc {3}{2}{LU Factorization}{5}{0}{2}
+\beamer@subsectionintoc {3}{3}{Update Equations}{7}{0}{2}
+\beamer@subsectionintoc {3}{4}{LU Decomposition Result}{9}{0}{2}
+\beamer@subsectionintoc {3}{5}{Solving $A x = b$}{10}{0}{2}
+\beamer@sectionintoc {4}{Graphical Representation}{12}{0}{3}

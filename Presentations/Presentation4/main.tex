@@ -1,0 +1,164 @@
+\documentclass{beamer}
+\mode<presentation>
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usetheme{Boadilla}
+\usecolortheme{lily}
+
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{% 
+    \begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left]{author in head/foot}%
+      \hspace{1em} Arnav Makarand Yadnopavit
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,right]{author in head/foot}%
+      \insertframenumber{} / \inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}}%
+}
+\setbeamertemplate{navigation symbols}{}
+
+\numberwithin{equation}{section}
+\title{10.3.2.5: LU Factorization}
+\author{EE24BTECH11007 - Arnav Makarand Yadnopavit}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\section*{Outline}
+\begin{frame}
+\tableofcontents
+\end{frame}
+
+\section{Question}
+\begin{frame}
+\frametitle{Question}
+Half the perimeter of a rectangular garden, whose length is 4 m more than its width, is 36 m. Find the dimensions of the garden.
+\end{frame}
+
+\section{Solution}
+\subsection{Matrix Representation}
+\begin{frame}
+\frametitle{Matrix Representation}
+Let the length and width of the garden be $x$ and $y$, respectively.
+\begin{align*}
+    x + y &= 36, \\
+    x - y &= 4.
+\end{align*}
+We represent this system in matrix form:
+\begin{align*}
+    A &= \begin{bmatrix} 1 & 1 \\ 1 & -1 \end{bmatrix}, \quad
+    b = \begin{bmatrix} 36 \\ 4 \end{bmatrix}, \quad
+    x = \begin{bmatrix} x \\ y \end{bmatrix}.
+\end{align*}
+\end{frame}
+
+\subsection{LU Factorization}
+\begin{frame}
+\frametitle{LU Factorization Using Update Equations}
+\begin{itemize}
+    \item Given a matrix $\mathbf{A}$ of size $n \times n$, LU decomposition is performed row by row and column by column.
+    \item The update equations are as follows:
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Step-by-Step Procedure}
+\begin{enumerate}
+    \item \textbf{Initialization:} 
+    \begin{itemize}
+        \item Start by initializing $\mathbf{L}$ as the identity matrix $\mathbf{L} = \mathbf{I}$ and $\mathbf{U}$ as a copy of $\mathbf{A}$.
+    \end{itemize}
+    \item \textbf{Iterative Update:}
+    \begin{itemize}
+        \item For each pivot $k = 1, 2, \ldots, n$:
+        \begin{enumerate}
+            \item Compute the entries of $\mathbf{U}$ using the first update equation.
+            \item Compute the entries of $\mathbf{L}$ using the second update equation.
+        \end{enumerate}
+    \end{itemize}
+    \item \textbf{Result:}
+    \begin{itemize}
+        \item After completing the iterations, the matrix $\mathbf{A}$ is decomposed into $\mathbf{L} \cdot \mathbf{U}$, where $\mathbf{L}$ is a lower triangular matrix with ones on the diagonal, and $\mathbf{U}$ is an upper triangular matrix.
+    \end{itemize}
+\end{enumerate}
+\end{frame}
+
+\subsection{Update Equations}
+\begin{frame}
+\frametitle{Update for $U_{k,j}$ (Entries of $U$)}
+For each column $j \geq k$, the entries of $U$ in the $k$-th row are updated as:
+\[
+    U_{k,j} = A_{k,j} - \sum_{m=1}^{k-1} L_{k,m} \cdot U_{m,j}, \quad \text{for } j \geq k.
+\]
+This equation computes the elements of the upper triangular matrix $\mathbf{U}$ by eliminating the lower triangular portion of the matrix.
+\end{frame}
+
+\begin{frame}
+\frametitle{Update for $L_{i,k}$ (Entries of $L$)}
+For each row $i > k$, the entries of $L$ in the $k$-th column are updated as:
+\[
+    L_{i,k} = \frac{1}{U_{k,k}} \left( A_{i,k} - \sum_{m=1}^{k-1} L_{i,m} \cdot U_{m,k} \right), \quad \text{for } i > k.
+\]
+This equation computes the elements of the lower triangular matrix $\mathbf{L}$, where each entry in the column is determined by the values in the rows above it.
+\end{frame}
+
+\subsection{LU Decomposition Result}
+\begin{frame}
+\frametitle{LU Decomposition Result}
+Using code, we compute:
+\[
+    L = \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix}, \quad
+    U = \begin{bmatrix} 1 & 1 \\ 0 & -2 \end{bmatrix}.
+\]
+\end{frame}
+
+\subsection{Solving $Ax = b$}
+\begin{frame}
+\frametitle{Forward Substitution: Solve $Ly = b$}
+\begin{align*}
+    \begin{bmatrix} 1 & 0 \\ 1 & 1 \end{bmatrix} \begin{bmatrix} y_1 \\ y_2 \end{bmatrix} = \begin{bmatrix} 36 \\ 4 \end{bmatrix}.
+\end{align*}
+\begin{itemize}
+    \item From the first row: $y_1 = 36$.
+    \item From the second row: $y_1 + y_2 = 4 \implies y_2 = -32$.
+\end{itemize}
+Thus:
+\[
+    y = \begin{bmatrix} 36 \\ -32 \end{bmatrix}.
+\]
+\end{frame}
+
+\begin{frame}
+\frametitle{Back Substitution: Solve $Ux = y$}
+\begin{align*}
+    \begin{bmatrix} 1 & 1 \\ 0 & -2 \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \begin{bmatrix} 36 \\ -32 \end{bmatrix}.
+\end{align*}
+\begin{itemize}
+    \item From the second row: $-2y = -32 \implies y = 16$.
+    \item Substitute $y = 16$ into the first row: $x + y = 36 \implies x = 20$.
+\end{itemize}
+Thus:
+\[
+    x = 20, \quad y = 16.
+\]
+\end{frame}
+
+\section{Graphical Representation}
+\begin{frame}
+\frametitle{Graphical Representation}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\linewidth]{figs/fig.png}
+\end{figure}
+\end{frame}
+
+\end{document}
+
