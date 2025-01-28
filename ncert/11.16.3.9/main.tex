@@ -58,39 +58,50 @@
 \renewcommand{\thetable}{\theenumi}
 \parindent 0px Question: If $\frac{1}{12}$ is the probability of an event, what is the probability of the event 'not A'.\\
 \solution\\
-Let us solve the problem using a random variable.
+Let us solve the problem using a Bernouli random variable.
+
+    The Bernoulli R.V is defined as,
+\begin{align}
+	X_i = \begin{cases}
+		0 & \text{not A}\\	
+		1 & \text{A}	
+	\end{cases}
+\end{align}
+The PMF of Bernoulli R.V is given by,
+\begin{align}
+  p_X\brak{x} = \begin{cases}
+    1-p & x = 0\\
+    p & x = 1
+  \end{cases}
+\end{align}
 \begin{itemize}
-    \item Define a random variable $ X $ such that:
-    \[
-    p_X(x) =
-    \begin{cases}
-    1, & \text{if event } A \text{ occurs}, \\
-    0, & \text{if event } A \text{ does not occur}.
-    \end{cases}
-    \]
-
     \item The probability of $ A $ occurring is given as $ P(A) = \frac{1}{12} $.  
-    Therefore, $ p_X(x) = P(A) = \frac{1}{12} $.
+    Therefore, $ p_X(1) = P(A) = \frac{1}{12} $.
 
-    \item The probability of the complement of $ A $ (denoted as "not $ A $") is $ P(A^\prime) $, which is the probability of $p_X(0)$. Using the rule of complementary probabilities:
+    \item The probability of the complement of $ A $ (denoted as "not $ A $") is $ P(A^\prime) = p_X(0) $. Using the rule of complementary probabilities:
     \[
-    P(A^\prime) = 1 - P(A)
+    P(A^\prime) = 1 - P(A).
     \]
 
     \item Substitute $ P(A) = \frac{1}{12} $ into the equation:
     \[
-    P(A^\prime) = 1 - \frac{1}{12}
-    \]
-
-    \item Simplify:
-    \[
-    P(A^\prime) = \frac{12}{12} - \frac{1}{12} = \frac{11}{12}.
+    P(A^\prime) = 1 - \frac{1}{12} = \frac{11}{12}.
     \]
 \end{itemize}
 
-Thus, the probability of the event "not $ A $" is:
-\[
-P(A^\prime) = \frac{11}{12}.
-\]
-
+Thus, the probabilities for the Bernoulli random variable $ X $ are:
+The PMF of Bernoulli R.V is given by,
+\begin{align}
+  p_X\brak{x} = \begin{cases}
+    \frac{11}{12} & x = 0\\
+    \frac{1}{12} & x = 1
+  \end{cases}
+\end{align}
+Hence probability of the event 'not A' is $\frac{11}{12}$.\\
+\textbf{Stem Plot of the PMF}\\
+Below is the stem plot for the PMF of the Bernoulli random variable:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\columnwidth]{figs/fig.png}
+ \end{figure}
 \end{document}
