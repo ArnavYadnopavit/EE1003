@@ -1,0 +1,6 @@
+\beamer@sectionintoc {2}{Question}{3}{0}{1}
+\beamer@sectionintoc {3}{Solution}{4}{0}{2}
+\beamer@subsectionintoc {3}{1}{Bernoulli Random Variable}{4}{0}{2}
+\beamer@subsectionintoc {3}{2}{Probability Calculation}{5}{0}{2}
+\beamer@subsectionintoc {3}{3}{PMF of Bernoulli R.V}{6}{0}{2}
+\beamer@sectionintoc {4}{Stem Plot of the PMF}{7}{0}{3}
