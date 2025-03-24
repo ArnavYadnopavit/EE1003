@@ -149,6 +149,111 @@ double factorial(int n) {
   for (int i = 1; i <= n; i++) fact *= i;
   return fact;
 }
+double rk4_ln(double x0, double x) {
+    if (x0 <= 0 || x <= 0) return NAN; // Ensure valid input
+    int n = 100; // Number of steps
+    double h = (x - x0) / n; // Step size
+    double y = log(x0); // Initial condition y0 = ln(x0)
+    
+    for (int i = 0; i < n; i++) {
+        double k1 = h / x0;
+        double k2 = h / (x0 + h / 2);
+        double k3 = h / (x0 + h / 2);
+        double k4 = h / (x0 + h);
+        y += (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+        x0 += h;
+    }
+    
+    return y; // Returns ln(x)
+}
+
+double rk4_log10(double x0, double x) {
+    return rk4_ln(x0, x) / log(10); // log10(x) = ln(x) / ln(10)
+}
+double rk4_power(double x, double n, double h = 0.01, int steps = 100) {
+    double y = 1;  // Start with x^0 = 1
+    double xn = x;
+
+    for (int i = 0; i < steps; i++) {
+        double k1 = n * pow(xn, n - 1);
+        double k2 = n * pow(xn + h / 2, n - 1);
+        double k3 = n * pow(xn + h / 2, n - 1);
+        double k4 = n * pow(xn + h, n - 1);
+        y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+        xn += h;
+    }
+    return y;
+}
+
+// RK4 for square root
+double rk4_sqrt(double x, double h = 0.01, int steps = 100) {
+    double y = 1;  // Initial guess
+    double xn = x;
+
+    for (int i = 0; i < steps; i++) {
+        double k1 = 1 / (2 * sqrt(xn));
+        double k2 = 1 / (2 * sqrt(xn + h / 2));
+        double k3 = 1 / (2 * sqrt(xn + h / 2));
+        double k4 = 1 / (2 * sqrt(xn + h));
+        y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+        xn += h;
+    }
+    return y;
+}
+
+// RK4 for cube root
+double rk4_cbrt(double x, double h = 0.01, int steps = 100) {
+    double y = 1;  // Initial guess
+    double xn = x;
+
+    for (int i = 0; i < steps; i++) {
+        double k1 = 1 / (3 * pow(xn, 2.0 / 3.0));
+        double k2 = 1 / (3 * pow(xn + h / 2, 2.0 / 3.0));
+        double k3 = 1 / (3 * pow(xn + h / 2, 2.0 / 3.0));
+        double k4 = 1 / (3 * pow(xn + h, 2.0 / 3.0));
+        y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+        xn += h;
+    }
+    return y;
+}
+double rk4_asin(double x, double h = 0.01, int steps = 100) {
+    double y = 0;  // arcsin(0) = 0
+    double xn = 0; // Start integration from x = 0
+
+    for (int i = 0; i < steps && xn < x; i++) {
+        double k1 = 1.0 / sqrt(1 - xn * xn);
+        double k2 = 1.0 / sqrt(1 - (xn + h / 2) * (xn + h / 2));
+        double k3 = 1.0 / sqrt(1 - (xn + h / 2) * (xn + h / 2));
+        double k4 = 1.0 / sqrt(1 - (xn + h) * (xn + h));
+
+        y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+        xn += h;
+    }
+    return y;
+}
+
+// RK4 for arccos(x) (cos⁻¹ x)
+double rk4_acos(double x, double h = 0.01, int steps = 100) {
+    return M_PI / 2 - rk4_asin(x);  // acos(x) = π/2 - asin(x)
+}
+
+// RK4 for arctan(x) (tan⁻¹ x)
+double rk4_atan(double x, double h = 0.01, int steps = 100) {
+    double y = 0;  // atan(0) = 0
+    double xn = 0; // Start integration from x = 0
+
+    for (int i = 0; i < steps && xn < x; i++) {
+        double k1 = 1.0 / (1 + xn * xn);
+        double k2 = 1.0 / (1 + (xn + h / 2) * (xn + h / 2));
+        double k3 = 1.0 / (1 + (xn + h / 2) * (xn + h / 2));
+        double k4 = 1.0 / (1 + (xn + h) * (xn + h));
+
+        y += h / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+        xn += h;
+    }
+    return y;
+}
+
 
 // ---------------- Expression Evaluation ----------------
 double evaluateExpression(String expr) {
@@ -166,7 +271,7 @@ double evaluateExpression(String expr) {
     return NAN;
   }
   
-
+  
   // Factorial (!)
   if (expr.endsWith("!")) {
     int num = expr.substring(0, expr.length() - 1).toInt();
@@ -205,7 +310,7 @@ double evaluateExpression(String expr) {
     }
 
     double exponent = expr.substring(idx + 1, exponentEnd).toDouble();
-    double result = pow(base, exponent);
+    double result = rk4_power(base, exponent);
 
     // Replace in expression
     expr = expr.substring(0, baseStart) + String(result) + expr.substring(exponentEnd);
@@ -217,7 +322,7 @@ double evaluateExpression(String expr) {
     int endIdx = expr.indexOf(")");
     if (endIdx > startIdx) {
       double val = expr.substring(startIdx, endIdx).toDouble();
-      return (val >= 0) ? sqrt(val) : NAN;
+      return (val >= 0) ? rk4_sqrt(val) : NAN;
     }
     return NAN;
   }
@@ -227,7 +332,7 @@ double evaluateExpression(String expr) {
     int endIdx = expr.indexOf(")");
     if (endIdx > startIdx) {
       double val = expr.substring(startIdx, endIdx).toDouble();
-      return pow(val, 1.0 / 3.0);
+      return rk4_cbrt(val);
     }
     return NAN;
   }
@@ -246,13 +351,45 @@ double evaluateExpression(String expr) {
   }
 
   // Inverse Trigonometry
-  if (expr.startsWith("sininv(")) return asin(expr.substring(7, expr.length() - 1).toDouble()) * (180.0 / M_PI);
-  if (expr.startsWith("cosinv(")) return acos(expr.substring(7, expr.length() - 1).toDouble()) * (180.0 / M_PI);
-  if (expr.startsWith("taninv(")) return atan(expr.substring(7, expr.length() - 1).toDouble()) * (180.0 / M_PI);
+  if (expr.startsWith("sininv(")) {
+        int startIdx = expr.indexOf("(") + 1;
+        int endIdx = expr.indexOf(")");
+        if (endIdx > startIdx) {
+            double val = expr.substring(startIdx, endIdx).toDouble();
+            if (val < -1 || val > 1) return NAN;  // Invalid input
+            return rk4_asin(val);
+        }
+    }
+
+    if (expr.startsWith("cosinv(")) {
+        int startIdx = expr.indexOf("(") + 1;
+        int endIdx = expr.indexOf(")");
+        if (endIdx > startIdx) {
+            double val = expr.substring(startIdx, endIdx).toDouble();
+            if (val < -1 || val > 1) return NAN;  // Invalid input
+            return rk4_acos(val);
+        }
+    }
+
+    if (expr.startsWith("taninv(")) {
+        int startIdx = expr.indexOf("(") + 1;
+        int endIdx = expr.indexOf(")");
+        if (endIdx > startIdx) {
+            double val = expr.substring(startIdx, endIdx).toDouble();
+            return rk4_atan(val);
+        }
+    }
 
   // Logarithms
-  if (expr.startsWith("ln(")) return log(expr.substring(3, expr.length() - 1).toDouble());
-  if (expr.startsWith("log(")) return log10(expr.substring(4, expr.length() - 1).toDouble());
+  if (expr.startsWith("ln(")) {
+        double x = expr.substring(3, expr.length() - 1).toDouble();
+        return rk4_ln(1, x); // Compute ln(x) using RK4
+    }
+    
+    if (expr.startsWith("log(")) {
+        double x = expr.substring(4, expr.length() - 1).toDouble();
+        return rk4_log10(1, x); // Compute log10(x) using RK4
+    }
 valueTop = -1;
     operatorTop = -1;
 

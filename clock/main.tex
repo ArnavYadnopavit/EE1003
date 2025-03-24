@@ -1,0 +1,126 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{hyperref}
+
+\title{Digital Clock}
+\author{ArnavYadnopavit\\EE24BTECH11007}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This report describes the implementation of a digital clock using an Arduino Uno board with a 7447 BCD decoder. The project uses a multiplexed seven-segment display to show the current time, which can be adjusted using pushbuttons.
+
+\section{Hardware Connections}
+The following table lists the hardware connections between the microcontroller and other components:
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Microcontroller Pin} & \textbf{Connected Component} & \textbf{Function} \\
+        \hline
+        D2-D5 & 7447 BCD Decoder & BCD Digit Selection \\
+        D6, D7 & Digit Enable & Selects Active Display Digit \\
+        PB0-PB3 & Digit Enable & Enables Different Digits \\
+        PB4 & Hour Button & Increments Hours \\
+        PB5 & Minute Button & Increments Minutes \\
+        \hline
+    \end{tabular}
+    \caption{Pin Connections}
+    \label{tab:connections}
+\end{table}
+
+\section{Software Implementation}
+
+\subsection{Timer Configuration}
+The clock utilizes Timer0 in CTC (Clear Timer on Compare Match) mode to generate a 1ms time base. This is essential for keeping track of time and handling display multiplexing.
+
+\begin{lstlisting}[language=C, caption=Timer0 Configuration]
+TCCR0A = (1 << WGM01);  // CTC Mode
+TCCR0B = (1 << CS01) | (1 << CS00);  // Prescaler 64
+OCR0A = 249;  // 1ms interval
+TIMSK0 |= (1 << OCIE0A);  // Enable Timer Interrupt
+\end{lstlisting}
+
+\subsection{Multiplexed Display}
+Multiplexing is used to drive all six digits using fewer GPIO pins. Instead of having separate lines for each seven-segment display, only four BCD output lines (PD2-PD5) are used. Each digit is enabled sequentially using control signals (PD6, PD7, PB0-PB3). This rapid switching creates the illusion that all digits are continuously lit.
+
+The multiplexing process involves:
+\begin{itemize}
+\item Setting the correct BCD value for a digit.
+\item Enabling only one digit at a time.
+\item Introducing a small delay before switching to the next digit.
+\item Repeating the cycle continuously to maintain a steady display.
+\end{itemize}
+
+\begin{lstlisting}[language=C, caption=Digit Multiplexing]
+void displayDigit(uint8_t digit, uint8_t position) {
+    // Set the BCD output bits on PD2-PD5.
+    PORTD = (PORTD & 0xC3) | ((digit & 0x0F) << 2);
+    
+    // Enable the appropriate digit.
+    PORTD &= ~((1 << PD6) | (1 << PD7));
+    PORTB &= ~((1 << PB0) | (1 << PB1) | (1 << PB2) | (1 << PB3));
+    
+    switch(position) {
+        case 0: PORTD |= (1 << PD6); break;
+        case 1: PORTD |= (1 << PD7); break;
+        case 2: PORTB |= (1 << PB0); break;
+        case 3: PORTB |= (1 << PB1); break;
+        case 4: PORTB |= (1 << PB2); break;
+        case 5: PORTB |= (1 << PB3); break;
+    }
+    
+    _delay_ms(3);  // Short delay to reduce flicker.
+}
+\end{lstlisting}
+
+\subsection{Time Keeping}
+The system maintains time using a software counter that increments every second. The \texttt{millis()} function retrieves the elapsed time based on Timer0.
+
+\begin{lstlisting}[language=C, caption=Time Keeping]
+uint32_t millis(void) {
+    uint32_t ms;
+    cli();
+    ms = timer_millis;
+    sei();
+    return ms;
+}
+\end{lstlisting}
+
+\subsection{Button Handling with Debouncing}
+Push buttons are connected to PB4 and PB5 for adjusting hours and minutes. Since mechanical switches cause bouncing effects, a software debounce mechanism is implemented using a time delay.
+
+\begin{lstlisting}[language=C, caption=Button Debouncing]
+void checkButtons(void) {
+    bool hourState = (PINB & (1 << PB4)) != 0;
+    bool minuteState = (PINB & (1 << PB5)) != 0;
+    uint32_t currentMillis = millis();
+    
+    if (!hourState && lastHourState && ((currentMillis - lastHourPress) > debounceDelay)) {
+        hours = (hours + 1) % 24;
+        lastHourPress = currentMillis;
+    }
+    
+    if (!minuteState && lastMinuteState && ((currentMillis - lastMinutePress) > debounceDelay)) {
+        minutes = (minutes + 1) % 60;
+        lastMinutePress = currentMillis;
+    }
+    
+    lastHourState = hourState;
+    lastMinuteState = minuteState;
+}
+\end{lstlisting}
+For codes refer to:\\
+\url{https://github.com/ArnavYadnopavit/EE1003/tree/main/clock}\\
+
+\centering
+Thank you
+\end{document}
+
+
